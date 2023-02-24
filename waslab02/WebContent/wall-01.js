@@ -44,9 +44,7 @@ function likeHandler(tweetID) {
 
 function deleteHandler(tweetID) {
 	/*
-
 	 * TASK #4 
-
 	 */	
 }
 
@@ -66,7 +64,12 @@ function getTweets() {
 			/*
 			 * TASK #2 -->
 			 */
-			document.getElementById("tweet_list").innerHTML = tweet_list;
+			var tweetJSON = JSON.parse(tweet_list);
+
+            for (var i = 0; i < tweetJSON.length; ++i) {
+                var tt = tweetJSON[i];
+                document.getElementById("tweet_list").innerHTML += getTweetHTML(tt, "like");
+            }
 		}
 	};
 	req.send(null); 
