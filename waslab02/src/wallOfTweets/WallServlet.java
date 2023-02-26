@@ -73,7 +73,7 @@ public class WallServlet extends HttpServlet {
 				
 				JSONObject jsonTweet = new JSONObject(tweet);
 				//Creem token
-				jsonTweet.put("token", sha256(tweet.getId().toString()));
+				jsonTweet.put("token", sha256(String.valueOf(tweet.getId())));
 				resp.getWriter().println(jsonTweet.toString());
 			} 
 			
@@ -89,7 +89,11 @@ public class WallServlet extends HttpServlet {
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
 		String uri = req.getRequestURI();
 		long id = Long.valueOf(uri.substring(TWEETS_URI.length(),uri.length()));
-		Database.deleteTweet(id);
+		//Agafem el token de resp i comprovem
+		String token = req.getHeader("Authorization");
+		if(token.equals("token"+ sha256(String.valueOf(id)))) {
+			Database.deleteTweet(id);
+		}
 	}
 	
 	private String sha256(String text) {

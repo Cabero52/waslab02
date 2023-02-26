@@ -48,6 +48,9 @@ function deleteHandler(tweetID) {
 	 */	
 	req = new XMLHttpRequest();
 	req.open('DELETE', tweetsURI+ "/" + tweetID, /*async*/true);
+	//Autorització
+	req.setRequestHeader("Authorization", localStorage.getItem("token" + tweetID));
+	
 	req.onload = function() { 
 		if (req.status == 200) { // 200 OK
 			document.getElementById("tweet_"+tweetID).remove();
