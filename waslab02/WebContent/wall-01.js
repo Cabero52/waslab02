@@ -76,7 +76,15 @@ function getTweets() {
 
             for (var i = 0; i < tweetJSON.length; ++i) {
                 var tt = tweetJSON[i];
-                document.getElementById("tweet_list").innerHTML += getTweetHTML(tt, "like");
+                
+                //Si el id coincideix amb la id d'un tweet del localStorage, llavor podem esborrar
+                if(localStorage.getItem("tweet_id"+tt.id) == tt.id) {
+                	document.getElementById("tweet_list").innerHTML += getTweetHTML(tt, "delete");
+                }
+                else {
+                	document.getElementById("tweet_list").innerHTML += getTweetHTML(tt, "like");
+                }
+                
             }
 		}
 	};
@@ -96,8 +104,9 @@ function tweetHandler() {
 		if (req.status == 200) { // 200 OK
 			 var nt = JSON.parse(req.responseText);
 			 //Guardem id i token al localStorage
-			 localStorage.setItem("tweet_id", nt.id);
-			 localStorage.setItem("tweet_token", nt.token);
+			 localStorage.setItem("tweet_id"+nt.id, nt.id);
+			 localStorage.setItem("tweet_token"+nt.id, nt.token);
+			 
 			 document.getElementById("tweet_list").innerHTML = getTweetHTML(nt, "delete") + document.getElementById("tweet_list").innerHTML;
 		}
 	};
