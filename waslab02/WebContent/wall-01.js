@@ -95,11 +95,15 @@ function tweetHandler() {
 	req.onload = function() { 
 		if (req.status == 200) { // 200 OK
 			 var nt = JSON.parse(req.responseText);
+			 //Guardem id i token al localStorage
+			 localStorage.setItem("tweet_id", nt.id);
+			 localStorage.setItem("tweet_token", nt.token);
 			 document.getElementById("tweet_list").innerHTML = getTweetHTML(nt, "delete") + document.getElementById("tweet_list").innerHTML;
 		}
 	};
 	req.setRequestHeader("Content-Type","application/json");
 	req.send(JSON.stringify({author: author, text: text}));
+	
 
 	// clear form fields
 	document.getElementById("tweet_author").value = "";

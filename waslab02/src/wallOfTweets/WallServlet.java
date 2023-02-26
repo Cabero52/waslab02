@@ -1,6 +1,8 @@
 package wallOfTweets;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -49,7 +51,7 @@ public class WallServlet extends HttpServlet {
 		int lastIndex = uri.lastIndexOf("/likes");
 		if (lastIndex > -1) {  // uri ends with "/likes"
 			// Implements POST http://localhost:8080/waslab02/tweets/:id/likes
-			long id = Long.valueOf(uri.substring(TWEETS_URI.length(),lastIndex));		
+			long id = Long.valueOf(uri.substring(TWEETS_URI.length(),lastIndex));	
 			resp.setContentType("text/plain");
 			resp.getWriter().println(Database.likeTweet(id));
 		}
@@ -68,7 +70,10 @@ public class WallServlet extends HttpServlet {
 				String author = jsonObj.getString("author");
 				String text = jsonObj.getString("text");
 				Tweet tweet = Database.insertTweet(author, text);
+				
 				JSONObject jsonTweet = new JSONObject(tweet);
+				//Creem token
+				jsonTweet.put("token", sha256(tweet.getId().toString()));
 				resp.getWriter().println(jsonTweet.toString());
 			} 
 			
@@ -85,6 +90,26 @@ public class WallServlet extends HttpServlet {
 		String uri = req.getRequestURI();
 		long id = Long.valueOf(uri.substring(TWEETS_URI.length(),uri.length()));
 		Database.deleteTweet(id);
+	}
+	
+	private String sha256(String text) {
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+		} 
+		catch (NoSuchAlgorithmException e) {		
+			e.printStackTrace();
+			return null;
+		}
+		    
+		byte[] hash = md.digest(text.getBytes());
+		StringBuffer sb = new StringBuffer();
+		    
+		for(byte b : hash) {        
+			sb.append(String.format("%02x", b));
+		}
+		    
+		return sb.toString();
 	}
 
 }
